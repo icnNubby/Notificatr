@@ -1,11 +1,11 @@
-package ru.nubby.notificatr.broadcastreceivers;
+package ru.nubby.notificatr.app.broadcastreceivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import ru.nubby.notificatr.DefaultPreferences;
-import ru.nubby.notificatr.NotificationHelper;
+import ru.nubby.notificatr.app.store.DefaultPreferences;
+import ru.nubby.notificatr.app.utils.NotificationHelper;
 
 public class AlarmBootReceiver extends BroadcastReceiver {
 

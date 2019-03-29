@@ -1,4 +1,4 @@
-package ru.nubby.notificatr;
+package ru.nubby.notificatr.app.utils;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -12,9 +12,10 @@ import android.util.Log;
 import java.util.Calendar;
 
 import androidx.annotation.Nullable;
-import ru.nubby.notificatr.broadcastreceivers.AlarmBootReceiver;
-import ru.nubby.notificatr.broadcastreceivers.AlarmReceiver;
-import ru.nubby.notificatr.prefsutils.TimePreference;
+import ru.nubby.notificatr.app.broadcastreceivers.AlarmBootReceiver;
+import ru.nubby.notificatr.app.broadcastreceivers.AlarmReceiver;
+import ru.nubby.notificatr.app.prefsutils.TimePreference;
+import ru.nubby.notificatr.app.store.DefaultPreferences;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -104,6 +105,7 @@ public class NotificationHelper {
         }
 
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+
         if ((hourStart <= currentHour && hourEnd > currentHour) ||
                 ((hourEnd < hourStart) && (hourStart <= currentHour || currentHour < hourEnd)))  {
             calendar.add(Calendar.HOUR_OF_DAY, 1);

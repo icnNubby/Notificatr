@@ -1,4 +1,4 @@
-package ru.nubby.notificatr.broadcastreceivers;
+package ru.nubby.notificatr.app.broadcastreceivers;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -11,10 +11,10 @@ import android.net.Uri;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
-import ru.nubby.notificatr.DefaultPreferences;
-import ru.nubby.notificatr.MainActivity;
-import ru.nubby.notificatr.NotificationHelper;
 import ru.nubby.notificatr.R;
+import ru.nubby.notificatr.app.store.DefaultPreferences;
+import ru.nubby.notificatr.app.ui.preferences.MainActivity;
+import ru.nubby.notificatr.app.utils.NotificationHelper;
 
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String NOTIFICATION_CHANNEL_ID = "alarm_notificatr_channel_id";
@@ -49,16 +49,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(context, NotificationHelper.ALARM_TYPE_RTC,
                         intentToRepeat, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationManager manager = (NotificationManager)
-                context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel mChannel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    context.getResources().getString(R.string.main_notification_channel_name),
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            manager.createNotificationChannel(mChannel);
-        }
 
         Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.quite_impressed);
 

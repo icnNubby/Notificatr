@@ -1,4 +1,4 @@
-package ru.nubby.notificatr.prefsutils;
+package ru.nubby.notificatr.app.prefsutils;
 
 import android.os.Bundle;
 
@@ -9,7 +9,7 @@ import androidx.preference.PreferenceFragmentCompat;
 public class PreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-
+        //todo smthng?
     }
 
     @Override

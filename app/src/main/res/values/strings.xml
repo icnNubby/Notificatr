@@ -4,10 +4,17 @@
     <string name="set">Установить</string>
     <string name="cancel">Отмена</string>
     <string name="turn_on_title">Включить</string>
-    <string name="set_start_time_title">Установить время начала.</string>
-    <string name="set_finish_time_title">Установить время окончания.</string>
+    <string name="set_start_time_title">Установить время начала</string>
+    <string name="set_finish_time_title">Установить время окончания</string>
     <string name="notify_title">Текст уведомления</string>
     <string name="notify_default_value">СДЕЛАЙ!</string>
     <string name="time_default_value">10:00</string>
-    <string name="main_notification_channel_name">Notification channel main</string>
+    <string name="alarm_notification_channel_name">Notification channel for alarms</string>
+    <string name="stopwatch_notification_channel_name">Notification channel for stopwatch</string>
+    <string name="open_stopwatch">Открыть секундомер</string>
+
+    <string name="start">Старт</string>
+    <string name="reset">Перезапуск</string>
+    <string name="pause">Пауза</string>
+
 </resources>

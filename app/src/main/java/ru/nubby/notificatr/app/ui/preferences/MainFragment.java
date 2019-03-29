@@ -1,8 +1,9 @@
-package ru.nubby.notificatr;
+package ru.nubby.notificatr.app.ui.preferences;
 
 import android.os.Bundle;
 
-import ru.nubby.notificatr.prefsutils.PreferencesFragment;
+import ru.nubby.notificatr.R;
+import ru.nubby.notificatr.app.prefsutils.PreferencesFragment;
 
 public class MainFragment extends PreferencesFragment {
 

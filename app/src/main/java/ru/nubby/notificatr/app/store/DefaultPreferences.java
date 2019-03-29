@@ -1,4 +1,4 @@
-package ru.nubby.notificatr;
+package ru.nubby.notificatr.app.store;
 
 
 import android.content.Context;
