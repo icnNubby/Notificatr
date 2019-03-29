@@ -1,21 +1,33 @@
 package ru.nubby.notificatr.app.utils;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.util.Log;
+
+import org.threeten.bp.LocalDateTime;
 
 import java.util.Calendar;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import ru.nubby.notificatr.R;
+import ru.nubby.notificatr.app.NotificatrApp;
+import ru.nubby.notificatr.app.StopwatchAndroidService;
 import ru.nubby.notificatr.app.broadcastreceivers.AlarmBootReceiver;
 import ru.nubby.notificatr.app.broadcastreceivers.AlarmReceiver;
 import ru.nubby.notificatr.app.prefsutils.TimePreference;
 import ru.nubby.notificatr.app.store.DefaultPreferences;
+import ru.nubby.notificatr.app.ui.preferences.MainActivity;
+import ru.nubby.notificatr.app.ui.stopwatch.StopwatchActivity;
+import ru.nubby.notificatr.core.model.Stopwatch;
+import ru.nubby.notificatr.core.service.StopwatchService;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -24,11 +36,11 @@ public class NotificationHelper {
     private static final String TAG = NotificationHelper.class.getSimpleName();
 
     public static int ALARM_TYPE_RTC = 100;
+    public static int NOTIFICATION_ID = 111;
     private static AlarmManager alarmManagerRTC;
     private static PendingIntent alarmIntentRTC;
 
 
-    private static DefaultPreferences mDefaultPreferences;
 
     /**
      * This is the real time /wall clock time
@@ -36,9 +48,8 @@ public class NotificationHelper {
      * @param context
      */
     public static void scheduleRepeatingRTCNotification(Context context) {
-        mDefaultPreferences = new DefaultPreferences(context);
 
-        Calendar nextTimeCalendar = getNextWakeUpTime();
+        Calendar nextTimeCalendar = getNextWakeUpTime(context);
 
 
         Intent intent = new Intent(context, AlarmReceiver.class);
@@ -88,7 +99,8 @@ public class NotificationHelper {
     }
 
     @Nullable
-    private static Calendar getNextWakeUpTime() {
+    private static Calendar getNextWakeUpTime(Context context) {
+        DefaultPreferences mDefaultPreferences = new DefaultPreferences(context);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.SECOND, 0);
@@ -127,4 +139,50 @@ public class NotificationHelper {
         return calendar;
     }
 
+    public static Notification buildAlarmNotification(Context context) {
+        DefaultPreferences mDefaultPreferences = new DefaultPreferences(context);
+
+        Intent intentToRepeat = new Intent(context, MainActivity.class);
+        intentToRepeat.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(context, ALARM_TYPE_RTC,
+                        intentToRepeat, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.quite_impressed);
+
+        return new NotificationCompat.Builder(context,
+                NotificatrApp.NOTIFICATION_CHANNEL_ALARM_ID)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+                .setContentTitle(mDefaultPreferences.getText())
+                .setContentInfo(mDefaultPreferences.getText())
+                .setAutoCancel(true)
+                .setSound(soundUri)
+                .setVibrate(new long[]{500,1000})
+                .setLights(0xFF0000FF,100,3000)
+                .build();
+
+    }
+    public static Notification buildStopwatchNotification(Context context,
+                                                          String timeElapsed) {
+
+        Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + R.raw.quite_impressed);
+
+        DefaultPreferences mDefaultPreferences = new DefaultPreferences(context);
+        Intent intent = new Intent(context, StopwatchActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        return new NotificationCompat.Builder(context,
+                NotificatrApp.NOTIFICATION_CHANNEL_STOPWATCH_ID)
+                .setContentTitle(mDefaultPreferences.getText())
+                .setContentText(timeElapsed)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setSound(soundUri)
+                .setVibrate(new long[]{500,1000})
+                .setLights(0xFF0000FF,100,3000)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .build();
+    }
 }

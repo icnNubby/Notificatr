@@ -1,6 +1,9 @@
 package ru.nubby.notificatr.app.ui.stopwatch;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -19,6 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import ru.nubby.notificatr.R;
 import ru.nubby.notificatr.app.NotificatrApp;
 import ru.nubby.notificatr.app.StopwatchAndroidService;
+import ru.nubby.notificatr.app.utils.NotificationHelper;
+
+import static ru.nubby.notificatr.app.utils.NotificationHelper.NOTIFICATION_ID;
 
 public class StopwatchActivity extends AppCompatActivity implements StopwatchContract.View {
 
@@ -70,7 +76,10 @@ public class StopwatchActivity extends AppCompatActivity implements StopwatchCon
         mTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread(() -> mStopwatchText.setText(mPresenter.getStopwatchTimeElapsed()));
+                runOnUiThread(() -> {
+                    mStopwatchText.setText(mPresenter.getStopwatchTimeElapsed());
+
+                });
             }
         }, 0, UPDATE_DELAY);
     }

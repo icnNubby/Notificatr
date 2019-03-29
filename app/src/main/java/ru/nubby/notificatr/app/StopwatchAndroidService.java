@@ -1,7 +1,7 @@
 package ru.nubby.notificatr.app;
 
 import android.app.Notification;
-import android.app.PendingIntent;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -12,13 +12,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDateTime;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import ru.nubby.notificatr.R;
-import ru.nubby.notificatr.app.store.DefaultPreferences;
-import ru.nubby.notificatr.app.ui.stopwatch.StopwatchActivity;
+import ru.nubby.notificatr.app.utils.NotificationHelper;
 import ru.nubby.notificatr.app.utils.PrintUtil;
 import ru.nubby.notificatr.core.events.StopwatchPaused;
 import ru.nubby.notificatr.core.events.StopwatchStarted;
@@ -28,16 +27,17 @@ import ru.nubby.notificatr.core.model.Stopwatch;
 import ru.nubby.notificatr.core.service.StopwatchService;
 import ru.nubby.notificatr.core.service.StopwatchServiceImpl;
 
+import static ru.nubby.notificatr.app.utils.NotificationHelper.NOTIFICATION_ID;
+
 public class StopwatchAndroidService extends Service implements StopwatchService, StopwatchManager {
     private static final String TAG = StopwatchAndroidService.class.getSimpleName();
 
-    private final int NOTIFICATION_ID = 111;
     private final AtomicReference<Stopwatch> mStopwatchAtomicReference = new AtomicReference<>();
     private final StopwatchService mStopwatchService = new StopwatchServiceImpl();
-    private DefaultPreferences mDefaultPreferences;
     private final IBinder mBinder = new LocalBinder();
     private final EventBus mEventBus = EventBus.getDefault();
     private Notification mNotification = null;
+    private Timer mTimer;
 
     @Nullable
     @Override
@@ -49,8 +49,16 @@ public class StopwatchAndroidService extends Service implements StopwatchService
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
-        mDefaultPreferences = new DefaultPreferences(this);
         mStopwatchAtomicReference.set(mStopwatchService.create());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
     }
 
     @Override
@@ -76,8 +84,33 @@ public class StopwatchAndroidService extends Service implements StopwatchService
         Stopwatch newStopwatch = mStopwatchService.start(stopwatch, startedAt);
         mStopwatchAtomicReference.set(newStopwatch);
         mEventBus.post(new StopwatchStarted(newStopwatch));
-        mNotification = (mNotification == null) ? createNotification(newStopwatch): mNotification;
+        mNotification = (mNotification == null) ?
+                NotificationHelper.buildStopwatchNotification(getApplicationContext(),
+                        PrintUtil.durationToString(
+                                mStopwatchService.timeElapsed(newStopwatch, LocalDateTime.now()))) :
+                mNotification;
         startForeground(NOTIFICATION_ID, mNotification);
+
+        mTimer = new Timer();
+        mTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+
+                NotificationManager manager = (NotificationManager)
+                        getSystemService(NOTIFICATION_SERVICE);
+
+                String duration =
+                        PrintUtil.durationToString(
+                                mStopwatchService.timeElapsed(mStopwatchAtomicReference.get(),
+                                        LocalDateTime.now()));
+
+                Notification notification = NotificationHelper.buildStopwatchNotification(
+                        getApplicationContext(), duration);
+
+                manager.notify(NOTIFICATION_ID, notification);
+
+            }
+        }, 0, 1000);
 
         return newStopwatch;
     }
@@ -101,6 +134,10 @@ public class StopwatchAndroidService extends Service implements StopwatchService
         mStopwatchAtomicReference.set(newStopwatch);
         mEventBus.post(new StopwatchWasReset(newStopwatch));
 
+        if (mTimer  != null) {
+            mTimer.cancel();
+        }
+
         stopForeground(true);
 
         return newStopwatch;
@@ -111,18 +148,7 @@ public class StopwatchAndroidService extends Service implements StopwatchService
         return mStopwatchService.timeElapsed(stopwatch, now);
     }
 
-    private Notification createNotification(Stopwatch stopwatch) {
-        Intent intent = new Intent(getApplicationContext(), StopwatchActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        String timeElapsedString = PrintUtil.durationToString(
-                mStopwatchService.timeElapsed(stopwatch, LocalDateTime.now()));
-        return new NotificationCompat.Builder(this, NotificatrApp.NOTIFICATION_CHANNEL_STOPWATCH_ID)
-                .setContentTitle(mDefaultPreferences.getText())
-                .setContentText(timeElapsedString)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
-                .build();
-    }
+
 
     public class LocalBinder extends Binder {
         public StopwatchAndroidService getService() {

@@ -14,7 +14,7 @@
     <string name="open_stopwatch">Открыть секундомер</string>
 
     <string name="start">Старт</string>
-    <string name="reset">Перезапуск</string>
+    <string name="reset">Стоп</string>
     <string name="pause">Пауза</string>
 
 </resources>

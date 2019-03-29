@@ -9,8 +9,8 @@ public final class PrintUtil {
         long hours = duration.toHours();
         long minutes = duration.toMinutes() - hours * 60;
         long seconds = duration.getSeconds() - hours * 60 - minutes * 60;
-        String minutesString = minutes > 10? String.valueOf(minutes) : "0" + minutes;
-        String secondsString = seconds > 10? String.valueOf(seconds) : "0" + seconds;
+        String minutesString = minutes >= 10? String.valueOf(minutes) : "0" + minutes;
+        String secondsString = seconds >= 10? String.valueOf(seconds) : "0" + seconds;
         return hours > 0?
                 hours + ":" + minutesString + ":" + secondsString :
                 minutesString + ":" + secondsString;
