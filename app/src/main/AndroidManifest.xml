@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".app.ui.preferences.MainActivity">
+        <activity android:name=".app.ui.preferences.MainActivity"
+            android:launchMode="singleTop">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +38,8 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".app.StopwatchAndroidService" />
+        <service android:name=".app.StopwatchAndroidService"
+            android:launchMode="singleInstance"/>
     </application>
 
 </manifest>

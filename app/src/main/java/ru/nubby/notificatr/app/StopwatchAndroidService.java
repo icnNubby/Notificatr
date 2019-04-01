@@ -56,6 +56,7 @@ public class StopwatchAndroidService extends Service implements StopwatchService
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+        stopForeground(true);
         if (mTimer != null) {
             mTimer.cancel();
         }
@@ -91,6 +92,9 @@ public class StopwatchAndroidService extends Service implements StopwatchService
                 mNotification;
         startForeground(NOTIFICATION_ID, mNotification);
 
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
         mTimer = new Timer();
         mTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -134,7 +138,7 @@ public class StopwatchAndroidService extends Service implements StopwatchService
         mStopwatchAtomicReference.set(newStopwatch);
         mEventBus.post(new StopwatchWasReset(newStopwatch));
 
-        if (mTimer  != null) {
+        if (mTimer != null) {
             mTimer.cancel();
         }
 

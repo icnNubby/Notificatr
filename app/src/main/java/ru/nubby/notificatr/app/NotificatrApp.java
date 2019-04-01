@@ -10,6 +10,8 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.IBinder;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
+
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -49,6 +51,7 @@ public class NotificatrApp extends Application implements LifecycleObserver {
     @Override
     public void onCreate() {
         super.onCreate();
+        AndroidThreeTen.init(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
         initNotificationChannels();
         sNotificatrApp = this;

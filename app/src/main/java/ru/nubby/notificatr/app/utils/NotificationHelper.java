@@ -178,10 +178,8 @@ public class NotificationHelper {
                 .setContentText(timeElapsed)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
-                .setSound(soundUri)
-                .setVibrate(new long[]{500,1000})
-                .setLights(0xFF0000FF,100,3000)
                 .setAutoCancel(true)
+                .setDefaults(0)
                 .setOnlyAlertOnce(true)
                 .build();
     }

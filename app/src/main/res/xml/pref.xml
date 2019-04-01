@@ -29,7 +29,8 @@
 
 
     <Preference
-        android:title="@string/open_stopwatch">
+        android:title="@string/open_stopwatch"
+        app:iconSpaceReserved="false">
 
         <intent
             android:action="android.intent.action.VIEW"

@@ -73,17 +73,17 @@ public class StopwatchPresenter implements StopwatchContract.Presenter {
         mEventBus.unregister(this);
     }
     @Subscribe
-    void onStopwatchStarted(StopwatchStarted event) {
+    public void onStopwatchStarted(StopwatchStarted event) {
         this.mStopwatch = event.getStopwatch();
         mView.showPauseButton();
     }
     @Subscribe
-    void onStopwatchPaused(StopwatchPaused event) {
+    public void onStopwatchPaused(StopwatchPaused event) {
         this.mStopwatch = event.getStopwatch();
         mView.showStartResetButtons();
     }
     @Subscribe
-    void onStopwatchReset(StopwatchWasReset event) {
+    public void onStopwatchReset(StopwatchWasReset event) {
         this.mStopwatch = event.getStopwatch();
         mView.showStartResetButtons();
     }
